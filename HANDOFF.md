@@ -1,5 +1,5 @@
 # Session Handoff
-_Last updated: 2026-09-04 (BUILD 3, 미배포)_
+_Last updated: 2026-09-04 (BUILD 3 테스트 배포)_
 
 ## 지금 상태
 
@@ -13,7 +13,7 @@ _Last updated: 2026-09-04 (BUILD 3, 미배포)_
            테스트 25개 + 봇 sim(skip, `SIM=1`). 개발 훅 `window.__nopi`(game·tuning·floors·tap·stepOnce) — DEV 전용
 봇 계측    (탭 오차 σ=base+k·속도, 시드 12) 초보 21층·20초 · 보통 42층·34초 · 숙련 117층·62초 · 상위 292층·96초.
            봇은 첫 교차에서 바로 탭하므로 사람은 이보다 길다. D-001 4번(30~60초) 안. 1차(210/520/40/620)는 12~16초라 느리게 시작해 길게 올렸다
-콘솔       miniAppId **72506**, appName `nopinopi`, workspace 72091. B2 테스트 배포 `01a06804…`(2026-09-04 01:06, 콘솔 MCP, 문자 전송; B1은 `01a067ea…`). minAge 19(기본값) → 출시 전 콘솔 웹에서 등급·카테고리·아이콘
+콘솔       miniAppId **72506**, appName `nopinopi`, workspace 72091. B3 테스트 배포 `01a0680a…`(2026-09-04 01:12, 콘솔 MCP, 문자 전송; B2 `01a06804…` · B1 `01a067ea…`). minAge 19(기본값) → 출시 전 콘솔 웹에서 등급·카테고리·아이콘
 저장소     github.com/jsypsy/nopinopi (private — GRAC 심의용 gh-pages가 필요해지면 public으로)
 디자인     밝은 카툰(도형 + 굵은 외곽선 + 오프셋 그림자), 층 색 6색 순환, 층수에 따라 낮→노을→밤→우주. 에셋 0. **소리 있음**(D-003 — WebAudio 합성 3종, 앱 안 토글 없음·기기 볼륨에 맡김). 디자인 개편 시안 3안은 반려(`design/concepts/`)
 다음       실기기 판정 → Phase 1 잔여(튜토리얼 데모 카드·리더보드 버튼·공유·뒤로가기 모달) → 아이콘·스토어 문안 → GRAC
