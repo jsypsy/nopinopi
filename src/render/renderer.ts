@@ -342,12 +342,16 @@ export class Renderer {
     // 오늘 최고 (그 아래)
     ctx.font = `800 ${Math.round(13 * u)}px ${FONT}`
     const bt = `오늘 ${Math.max(hud.dailyBest, n)}층 · 역대 ${Math.max(hud.best, n)}층`
-    const bw = ctx.measureText(bt).width + 42 * u
+    // 좌우 여백을 12u로 맞춘다: [12u][별 11u][6u][글자][12u]
+    const bw = ctx.measureText(bt).width + 41 * u
     const by = top + 52 * u
     this.chip(14 * u, by, bw, 30 * u, COL.gold, 3 * u)
-    this.star(30 * u, by + 15 * u, 6 * u)
+    // 별은 chip()이 남긴 금색 fillStyle을 물려받아 금색-위-금색으로 안 보였다 —
+    // 보이지 않는 별이 왼쪽 여백만 잡아먹어 좌우가 어긋나 보였다 (B4에서 수정)
     ctx.fillStyle = COL.ink
-    ctx.fillText(bt, 42 * u, by + 20 * u)
+    this.star(31.5 * u, by + 15 * u, 5.5 * u)
+    ctx.fillStyle = COL.ink
+    ctx.fillText(bt, 43 * u, by + 20 * u)
     // 오늘의 탑 (오른쪽 위)
     ctx.font = `800 ${Math.round(12 * u)}px ${FONT}`
     const dt = `${hud.dateLabel}의 탑`
