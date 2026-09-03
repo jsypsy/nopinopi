@@ -7,7 +7,7 @@ import { bindPointer } from './input/pointer'
 import { createPlatform } from './platform'
 import { cancelHostTopInset } from './platform/adapter'
 import { Renderer } from './render/renderer'
-import { loadBest, loadDailyBest, loadMuted, loadStreak, saveBest, saveDailyBest, saveMuted, saveStreak } from './storage'
+import { loadBest, loadDailyBest, loadStreak, saveBest, saveDailyBest, saveStreak } from './storage'
 import { Sfx } from './audio'
 
 const SIM_STEP = 1 / 120
@@ -19,7 +19,7 @@ const canvas = document.getElementById('game') as HTMLCanvasElement
 const ctx = canvas.getContext('2d')!
 const renderer = new Renderer(ctx)
 const analytics = new Analytics(platform)
-const sfx = new Sfx(loadMuted())
+const sfx = new Sfx()
 let adBusy = false
 
 /** 오늘 — 자정을 넘기면 시작 화면에서 새 탑으로 갈아탄다 */
@@ -133,12 +133,6 @@ bindPointer(
       return
     }
     if (game.phase === 'ready') {
-      if (renderer.hitMuteButton(x, y)) {
-        sfx.muted = !sfx.muted
-        saveMuted(sfx.muted)
-        if (!sfx.muted) sfx.unlock()
-        return
-      }
       startRun()
       return
     }
@@ -213,7 +207,7 @@ function tick(now: number, dt: number): void {
     w,
     h,
     insets.top,
-    { best, dailyBest, dateLabel: dailyLabel(todayKey), streak: streak.last === todayKey ? streak.count : streak.count, muted: sfx.muted },
+    { best, dailyBest, dateLabel: dailyLabel(todayKey), streak: streak.last === todayKey ? streak.count : streak.count },
     { continuesLeft: continuesLeft(game), maxContinues: TUNING.maxContinues, adBusy },
     now,
   )

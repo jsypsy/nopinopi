@@ -25,7 +25,6 @@ export interface HudInfo {
   dailyBest: number
   dateLabel: string
   streak: number
-  muted: boolean
 }
 
 interface Rect {
@@ -78,7 +77,6 @@ export class Renderer {
   private popups: Popup[] = []
   private death: DeathFx | null = null
   private deathButtons: { continue: Rect | null; retry: Rect | null } = { continue: null, retry: null }
-  private muteButton: Rect | null = null
   /** 낙하 연출: 놓인 순간의 층과 시각 */
   private dropAt = -1e9
   private shakeAt = -1e9
@@ -96,11 +94,6 @@ export class Renderer {
     if (inside(this.deathButtons.continue)) return 'continue'
     if (inside(this.deathButtons.retry)) return 'retry'
     return null
-  }
-
-  hitMuteButton(x: number, y: number): boolean {
-    const r = this.muteButton
-    return !!r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h
   }
 
   /** 층이 늘었을 때 잘린 조각·팝업을 만든다 — main이 events를 읽고 부른다 */
@@ -144,7 +137,6 @@ export class Renderer {
       this.death = null
       this.deathButtons = { continue: null, retry: null }
     }
-    if (g.phase !== 'ready') this.muteButton = null
     const deadT = this.death ? now - this.death.t0 : 0
     // 월드 y(위로 +) → 화면 y. 바닥의 바닥이 화면 아래에서 cam.y 만큼 위
     const toY = (wy: number) => h - (wy - cam.y) * s
@@ -395,45 +387,6 @@ export class Renderer {
     const pulse = 1 + 0.03 * Math.sin(now / 260)
     ctx.scale(pulse, pulse)
     this.pill('탭해서 시작', 0, 0, `900 ${Math.round(17 * u)}px ${FONT}`, COL.accent, '#ffffff', 34 * u, 4 * u, u, false, 46 * u)
-    ctx.restore()
-    // 소리 토글 (D-003) — 탭 영역은 그림보다 넉넉히(44px)
-    const my = h * 0.62 + 52 * u + 62 * u
-    const label = hud.muted ? '소리 꺼짐' : '소리 켜짐'
-    this.pill(label, cx, my, `800 ${Math.round(13 * u)}px ${FONT}`, hud.muted ? COL.card : COL.gold, hud.muted ? COL.inkSoft : COL.ink, 22 * u, 0, u, true, 32 * u)
-    this.speaker(cx - ctx.measureText(label).width / 2 - 11 * u, my, 6 * u, hud.muted)
-    this.muteButton = { x: cx - 80 * u, y: my - 22 * u, w: 160 * u, h: 44 * u }
-  }
-
-  /** 스피커 아이콘: 작은 사다리꼴 + (켜짐) 호 두 개 / (꺼짐) 빗금 */
-  private speaker(cx: number, cy: number, r: number, muted: boolean): void {
-    const ctx = this.ctx
-    ctx.save()
-    ctx.strokeStyle = muted ? COL.inkSoft : COL.ink
-    ctx.fillStyle = ctx.strokeStyle
-    ctx.lineWidth = Math.max(1.5, r * 0.28)
-    ctx.lineJoin = 'round'
-    ctx.lineCap = 'round'
-    ctx.beginPath()
-    ctx.moveTo(cx - r * 1.4, cy - r * 0.45)
-    ctx.lineTo(cx - r * 0.7, cy - r * 0.45)
-    ctx.lineTo(cx, cy - r)
-    ctx.lineTo(cx, cy + r)
-    ctx.lineTo(cx - r * 0.7, cy + r * 0.45)
-    ctx.lineTo(cx - r * 1.4, cy + r * 0.45)
-    ctx.closePath()
-    ctx.fill()
-    if (muted) {
-      ctx.beginPath()
-      ctx.moveTo(cx + r * 0.4, cy - r * 0.6)
-      ctx.lineTo(cx + r * 1.4, cy + r * 0.6)
-      ctx.stroke()
-    } else {
-      for (const k of [0.6, 1.1]) {
-        ctx.beginPath()
-        ctx.arc(cx, cy, r * k, -Math.PI / 4, Math.PI / 4)
-        ctx.stroke()
-      }
-    }
     ctx.restore()
   }
 

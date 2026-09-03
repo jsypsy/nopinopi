@@ -7,7 +7,6 @@ const BEST_KEY = `${NS}.best`
 const DAILY_KEY = `${NS}.daily`
 const STREAK_KEY = `${NS}.streak`
 const TUTORIAL_KEY = `${NS}.tutorial-done`
-const MUTED_KEY = `${NS}.muted`
 
 function read(key: string): string | null {
   try {
@@ -71,12 +70,4 @@ export function isTutorialDone(): boolean {
 }
 export function markTutorialDone(): void {
   write(TUTORIAL_KEY, '1')
-}
-
-/** 소리 끔 (D-003) — 기본은 켜짐 */
-export function loadMuted(): boolean {
-  return read(MUTED_KEY) === '1'
-}
-export function saveMuted(muted: boolean): void {
-  write(MUTED_KEY, muted ? '1' : '0')
 }

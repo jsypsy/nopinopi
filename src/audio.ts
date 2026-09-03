@@ -4,19 +4,15 @@
  *   perfect 딱 '띵'          콤보마다 반음씩 올라가는 사인 톤
  *   miss   빗나감 '쿵'       하강 노이즈 + 저음
  * AudioContext는 첫 사용자 제스처에서 만든다(iOS 자동재생 정책). 실패하면 조용히 무음.
+ * 앱 안 뮤트 토글은 없다(D-003 보완) — 웹뷰는 기기 무음 스위치를 읽을 수 없어 UI가 실제 상태와 어긋난다. 볼륨은 기기에 맡긴다.
  */
 export class Sfx {
   private ctx: AudioContext | null = null
   private failed = false
-  muted: boolean
-
-  constructor(muted: boolean) {
-    this.muted = muted
-  }
 
   /** 포인터다운마다 부른다 — 컨텍스트 생성·재개 (iOS는 제스처 안에서만 resume가 통한다) */
   unlock(): void {
-    if (this.failed || this.muted) return
+    if (this.failed) return
     try {
       if (!this.ctx) {
         const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
@@ -100,7 +96,7 @@ export class Sfx {
   }
 
   private ready(): AudioContext | null {
-    if (this.muted || this.failed || !this.ctx || this.ctx.state !== 'running') return null
+    if (this.failed || !this.ctx || this.ctx.state !== 'running') return null
     return this.ctx
   }
 }
