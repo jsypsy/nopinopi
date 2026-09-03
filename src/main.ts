@@ -7,7 +7,8 @@ import { bindPointer } from './input/pointer'
 import { createPlatform } from './platform'
 import { cancelHostTopInset } from './platform/adapter'
 import { Renderer } from './render/renderer'
-import { loadBest, loadDailyBest, loadStreak, saveBest, saveDailyBest, saveStreak } from './storage'
+import { loadBest, loadDailyBest, loadMuted, loadStreak, saveBest, saveDailyBest, saveMuted, saveStreak } from './storage'
+import { Sfx } from './audio'
 
 const SIM_STEP = 1 / 120
 /** 사망 직후 오입력으로 바로 재시작되는 것 방지 (초) */
@@ -18,6 +19,7 @@ const canvas = document.getElementById('game') as HTMLCanvasElement
 const ctx = canvas.getContext('2d')!
 const renderer = new Renderer(ctx)
 const analytics = new Analytics(platform)
+const sfx = new Sfx(loadMuted())
 let adBusy = false
 
 /** 오늘 — 자정을 넘기면 시작 화면에서 새 탑으로 갈아탄다 */
@@ -77,6 +79,10 @@ function newGame(): void {
     dailyBest = loadDailyBest(todayKey)
   }
   game = createGame(seedFromKey(todayKey))
+  // 다시 하기는 ready 프레임 없이 바로 playing으로 가므로 여기서 저장값을 다시 읽는다 —
+  // 안 읽으면 세션 내 옛 최고와 비교해 더 낮은 층수를 저장하는 버그(B1 실기기 보고)
+  best = loadBest()
+  dailyBest = loadDailyBest(todayKey)
   cam.y = 0
   resultSaved = false
   renderer.reset()
@@ -118,6 +124,7 @@ async function tryContinue(): Promise<void> {
 bindPointer(
   canvas,
   (x, y) => {
+    sfx.unlock()
     if (game.phase === 'dead') {
       if (performance.now() - deadAt < RESTART_LOCK * 1000) return
       const hit = renderer.hitDeathButton(x, y)
@@ -126,6 +133,12 @@ bindPointer(
       return
     }
     if (game.phase === 'ready') {
+      if (renderer.hitMuteButton(x, y)) {
+        sfx.muted = !sfx.muted
+        saveMuted(sfx.muted)
+        if (!sfx.muted) sfx.unlock()
+        return
+      }
       startRun()
       return
     }
@@ -137,10 +150,17 @@ bindPointer(
 
 function drainEvents(now: number): void {
   for (const ev of game.events) {
-    if (ev === 'place') renderer.onPlaced(game, now, false)
-    else if (ev === 'perfect') renderer.onPlaced(game, now, true)
-    else if (ev === 'grow') renderer.onGrow(game, now)
-    else if (ev === 'miss') renderer.onMiss(game, now)
+    if (ev === 'place') {
+      renderer.onPlaced(game, now, false)
+      sfx.tap()
+    } else if (ev === 'perfect') {
+      renderer.onPlaced(game, now, true)
+      sfx.perfect(game.combo)
+    } else if (ev === 'grow') renderer.onGrow(game, now)
+    else if (ev === 'miss') {
+      renderer.onMiss(game, now)
+      sfx.miss()
+    }
   }
   game.events.length = 0
 }
@@ -193,7 +213,7 @@ function tick(now: number, dt: number): void {
     w,
     h,
     insets.top,
-    { best, dailyBest, dateLabel: dailyLabel(todayKey), streak: streak.last === todayKey ? streak.count : streak.count },
+    { best, dailyBest, dateLabel: dailyLabel(todayKey), streak: streak.last === todayKey ? streak.count : streak.count, muted: sfx.muted },
     { continuesLeft: continuesLeft(game), maxContinues: TUNING.maxContinues, adBusy },
     now,
   )

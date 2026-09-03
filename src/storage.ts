@@ -7,6 +7,7 @@ const BEST_KEY = `${NS}.best`
 const DAILY_KEY = `${NS}.daily`
 const STREAK_KEY = `${NS}.streak`
 const TUTORIAL_KEY = `${NS}.tutorial-done`
+const MUTED_KEY = `${NS}.muted`
 
 function read(key: string): string | null {
   try {
@@ -28,8 +29,9 @@ export function loadBest(): number {
   const n = Number(read(BEST_KEY))
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0
 }
+/** 단조 증가 — 세션 안의 옛 값과 비교해 낮은 층수로 덮어쓰는 사고를 저장 층에서 막는다 */
 export function saveBest(floors: number): void {
-  write(BEST_KEY, String(Math.floor(floors)))
+  write(BEST_KEY, String(Math.max(loadBest(), Math.floor(floors))))
 }
 
 /** 오늘의 최고 — 날짜 키가 다르면 0 */
@@ -42,7 +44,7 @@ export function loadDailyBest(key: string): number {
   }
 }
 export function saveDailyBest(key: string, floors: number): void {
-  write(DAILY_KEY, JSON.stringify({ key, best: Math.floor(floors) }))
+  write(DAILY_KEY, JSON.stringify({ key, best: Math.max(loadDailyBest(key), Math.floor(floors)) }))
 }
 
 export interface Streak {
@@ -69,4 +71,12 @@ export function isTutorialDone(): boolean {
 }
 export function markTutorialDone(): void {
   write(TUTORIAL_KEY, '1')
+}
+
+/** 소리 끔 (D-003) — 기본은 켜짐 */
+export function loadMuted(): boolean {
+  return read(MUTED_KEY) === '1'
+}
+export function saveMuted(muted: boolean): void {
+  write(MUTED_KEY, muted ? '1' : '0')
 }
