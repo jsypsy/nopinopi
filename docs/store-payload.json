@@ -1,0 +1,41 @@
+{
+  "_주석": "콘솔 앱정보 등록 페이로드 — GRAC 증명서 수령 후 miniApp.gameInfo.gameRating과 gameRatingCertificateUri만 채워 miniapp_update_basic_info(workspaceId 72091)로 보낸다. 문안 원본은 docs/STORE_COPY.md, 이미지 원본은 assets/store/. ⚠️ 등급 칸이 비면 MCP는 저장 없이 통째로 거부한다 — 등급 전에는 콘솔 웹 [임시저장]만이 길이다(STORE_COPY.md '등록 상태').",
+  "impression": {
+    "categoryIds": [3856],
+    "keywordList": ["높이높이", "탑쌓기", "블록쌓기", "원버튼게임", "한손게임", "미니게임", "캐주얼게임", "아케이드", "하이스코어", "오늘의탑"]
+  },
+  "miniApp": {
+    "miniAppId": 72506,
+    "appName": "nopinopi",
+    "title": "높이높이",
+    "titleEn": "Nopinopi",
+    "description": "오늘의 탑 몇 층까지?",
+    "detailDescription": "「높이높이」는 화면을 탭하는 것만으로 쌓아 올리는 원버튼 게임입니다.\n\n시작 화면에서 [탭해서 시작]을 누르면 바로 시작합니다. 화면 위쪽에서 블록이 좌우로 왕복하고, 화면 아무 곳이나 탭하면 그 자리에서 블록이 떨어져 아래 블록 위에 얹힙니다. 어긋난 만큼 잘려 나가 폭이 줄고, 빗나가면 그 자리에서 끝납니다.\n\n딱 맞추면 잘리지 않고 「딱!」이 뜹니다. 세 번 연속 성공하면 「폭 회복!」과 함께 줄어든 폭이 조금 되돌아옵니다. 실수를 만회하는 유일한 길입니다. 쌓아 올린 층수가 점수이고, 높이 올라갈수록 블록이 빨라지며 하늘이 낮에서 노을, 밤, 우주로 바뀝니다.\n\n같은 날에는 모두가 같은 탑을 쌓습니다. 블록의 속도와 첫 출발 방향이 그날의 날짜로 정해지기 때문입니다. 오늘의 최고 기록과 역대 최고 기록이 함께 표시되고, 게임이 끝나면 [광고 보고 이어하기]로 그 자리에서 이어 가거나 [다시 하기]로 새로 시작합니다.",
+    "iconUri": "https://static.toss.im/appsintoss/72091/638aa162-ff6a-431f-9be5-555a11d1cea5.png",
+    "darkModeIconUri": "https://static.toss.im/appsintoss/72091/5299f8ba-050e-45a6-9194-3a3b51b70a50.png",
+    "gameInfo": {
+      "horizontalThumbnailUri": "https://static.toss.im/appsintoss/72091/d714d0e8-6bb1-4545-8080-158843f9a075.png",
+      "scoreUnit": "층",
+      "scoreUnitEnglish": "floors",
+      "sortOrder": "DESC",
+      "_등급_수령후_추가": {
+        "gameRatingCertificateUri": "증명서 PDF 업로드 후 받은 키 (콘솔 웹에서 올리고 miniapp_get으로 읽는다)",
+        "gameRating": {
+          "ageRating": "ALL",
+          "bizName": "토니소프트",
+          "ratingNumber": "제 ??-??-??????-??? 호",
+          "contentRatings": ["NONE"]
+        }
+      }
+    },
+    "images": [
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/d714d0e8-6bb1-4545-8080-158843f9a075.png", "imageType": "THUMBNAIL", "orientation": "HORIZONTAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/dd02c22e-883e-488b-aed4-fbf81a366867.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/a8ca6846-0295-46c5-b591-7bbcfebd5b6f.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/93349526-d8f2-4b08-8155-279eb85d6a77.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/d194f787-273a-4234-b4a1-3d673e106a10.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#E7A97A", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/5648a3f3-9666-4654-8572-68ea7ee5f1fa.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/87f5d023-539f-4b86-9253-f6b6671c311a.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" }
+    ]
+  }
+}

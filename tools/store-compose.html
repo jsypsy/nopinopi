@@ -1,0 +1,249 @@
+<!doctype html>
+<!--
+  앱인토스 콘솔 "노출 정보" 이미지 합성 — 로고 600×600(라이트/다크) · 가로 썸네일 1932×828.
+  캔버스를 규격 크기 그대로 그린다. 콘솔은 1px만 달라도 업로드를 거부한다.
+
+    tools/store-compose.html?kind=logo | logo-dark | thumb
+
+  게임 팔레트(src/render/renderer.ts COL·BLOCK_COLORS)와 같은 색·같은 시스템 글꼴로 그린다.
+  블록·별·구름은 renderer의 도형 헬퍼를 손으로 옮긴 것 — 게임 코드를 import하지 않는다
+  (Renderer는 Game 상태를 요구해 정지 컷을 만들기엔 무겁다).
+
+  **로고에는 제목 글씨를 넣지 않는다** (날아날아 교훈 — 목록에서 줄면 뭉개지고, 이름은 플랫폼이 옆에 찍는다).
+  글씨는 가로 썸네일에만 쓴다.
+
+  저장: tools/shot-receiver.mjs를 띄우고 이 페이지에서 window.__send('파일명')를 부르면 PNG로 떨어진다.
+-->
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; background: #20242c; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  canvas { display: block; box-shadow: 0 0 0 1px #444; }
+</style>
+<canvas id="c"></canvas>
+<script>
+  const Q = new URLSearchParams(location.search)
+  const KIND = Q.get('kind') ?? 'logo'
+  const DARK = KIND === 'logo-dark'
+
+  const COL = { ink: '#243447', inkSoft: '#5b6b80', card: '#ffffff', accent: '#ff7f3f', gold: '#ffcc33' }
+  const BLOCKS = ['#ff8a80', '#ffb74d', '#fff176', '#aed581', '#4fc3f7', '#b39ddb']
+  const SKY = {
+    light: ['#bfe8f5', '#e8f7ff'],
+    dark: ['#0b1030', '#26305e'],
+  }
+  const FONT = 'system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif'
+
+  const SIZE = { logo: [600, 600], 'logo-dark': [600, 600], thumb: [1932, 828] }[KIND]
+  const canvas = document.getElementById('c')
+  canvas.width = SIZE[0]
+  canvas.height = SIZE[1]
+  // 화면에서는 절반으로 줄여 보여준다 (파일은 위 크기 그대로다)
+  canvas.style.width = SIZE[0] / 2 + 'px'
+  const ctx = canvas.getContext('2d')
+  const W = SIZE[0]
+  const H = SIZE[1]
+
+  function sky(top, bottom) {
+    const g = ctx.createLinearGradient(0, 0, 0, H)
+    g.addColorStop(0, top)
+    g.addColorStop(1, bottom)
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, W, H)
+  }
+
+  function roundRect(x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2)
+    ctx.beginPath()
+    ctx.moveTo(x + rr, y)
+    ctx.lineTo(x + w - rr, y)
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rr)
+    ctx.lineTo(x + w, y + h - rr)
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h)
+    ctx.lineTo(x + rr, y + h)
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rr)
+    ctx.lineTo(x, y + rr)
+    ctx.quadraticCurveTo(x, y, x + rr, y)
+    ctx.closePath()
+  }
+
+  /** 게임의 블록 한 장 — 오프셋 그림자 + 굵은 외곽선 + 윗면 하이라이트 */
+  function block(x, y, w, h, color, u) {
+    ctx.fillStyle = 'rgba(36,52,71,0.22)'
+    roundRect(x + 5 * u, y + 6 * u, w, h, 10 * u)
+    ctx.fill()
+    roundRect(x, y, w, h, 10 * u)
+    ctx.fillStyle = color
+    ctx.fill()
+    ctx.strokeStyle = COL.ink
+    ctx.lineWidth = 4 * u
+    ctx.lineJoin = 'round'
+    ctx.stroke()
+    ctx.save()
+    roundRect(x, y, w, h, 10 * u)
+    ctx.clip()
+    ctx.fillStyle = 'rgba(255,255,255,0.45)'
+    roundRect(x + 4 * u, y + 3 * u, w - 8 * u, h * 0.3, 6 * u)
+    ctx.fill()
+    ctx.restore()
+  }
+
+  function star(cx, cy, r, color) {
+    ctx.beginPath()
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 5
+      const rr = i % 2 === 0 ? r : r * 0.45
+      ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr)
+    }
+    ctx.closePath()
+    ctx.fillStyle = color
+    ctx.fill()
+  }
+
+  function cloud(x, y, k, alpha) {
+    ctx.globalAlpha = alpha
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath()
+    ctx.arc(x, y, 22 * k, 0, Math.PI * 2)
+    ctx.arc(x + 26 * k, y - 10 * k, 28 * k, 0, Math.PI * 2)
+    ctx.arc(x + 56 * k, y, 22 * k, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.globalAlpha = 1
+  }
+
+  function stars(n, seed, maxAlpha) {
+    for (let i = 0; i < n; i++) {
+      const sx = ((i * 97 + seed) % W)
+      const sy = ((i * 61 + seed * 3) % H)
+      const r = i % 3 === 0 ? 3 : 2
+      ctx.globalAlpha = maxAlpha * (0.4 + ((i * 13) % 7) / 10)
+      ctx.fillStyle = '#ffffff'
+      ctx.beginPath()
+      ctx.arc(sx, sy, r, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    ctx.globalAlpha = 1
+  }
+
+  /**
+   * 어긋나게 쌓인 탑 — 로고·썸네일 공통 주인공. 크기는 전부 px로 직접 준다
+   * (규격 캔버스가 두 종류라 단위 배율로 맞추면 한쪽이 잘린다)
+   */
+  function tower(cx, baseY, layers, u) {
+    let y = baseY
+    layers.forEach((L) => {
+      y -= L.h + 8
+      const x = cx - L.w / 2 + L.dx
+      block(x, y, L.w, L.h, L.color, u)
+      if (L.perfect) star(x + L.w - 30 * u, y + L.h / 2, 11 * u, COL.gold)
+    })
+    return y
+  }
+
+  if (KIND === 'logo' || KIND === 'logo-dark') {
+    const pal = DARK ? SKY.dark : SKY.light
+    sky(pal[0], pal[1])
+    if (DARK) stars(26, 7, 0.85)
+    else {
+      cloud(66, 150, 1.6, 0.9)
+      cloud(430, 470, 1.3, 0.75)
+    }
+    const u = 2.1
+    // 아래가 넓고 위로 갈수록 좁아지며 좌우로 크게 어긋난 탑 (4층) + 지금 떨어지는 블록 1개.
+    // 아이콘이 작게 줄어도 "어긋나게 쌓는 게임"으로 읽히도록 어긋남을 실제보다 과장한다
+    const top = tower(300, 560, [
+      { w: 360, h: 74, dx: 0, color: BLOCKS[0] },
+      { w: 326, h: 74, dx: 24, color: BLOCKS[1] },
+      { w: 292, h: 74, dx: -22, color: BLOCKS[2], perfect: true },
+      { w: 258, h: 74, dx: 18, color: BLOCKS[3], perfect: true },
+    ], u)
+    // 안내 점선 — 맨 위 층의 좌우 끝을 위로 이어 "여기에 맞춰야 한다"를 보여준다 (게임 화면에도 있다)
+    const gl = 300 - 258 / 2 + 18
+    const gr = 300 + 258 / 2 + 18
+    ctx.save()
+    ctx.setLineDash([13, 13])
+    ctx.strokeStyle = DARK ? 'rgba(255,255,255,0.5)' : 'rgba(36,52,71,0.34)'
+    ctx.lineWidth = 5
+    ctx.beginPath()
+    ctx.moveTo(gl, top - 62)
+    ctx.lineTo(gl, top - 6)
+    ctx.moveTo(gr, top - 62)
+    ctx.lineTo(gr, top - 6)
+    ctx.stroke()
+    ctx.restore()
+    block(300 - 236 / 2 + 62, 88, 236, 74, BLOCKS[4], u)
+  }
+
+  if (KIND === 'thumb') {
+    sky(SKY.light[0], SKY.light[1])
+    cloud(150, 190, 2.2, 0.9)
+    cloud(1180, 130, 1.7, 0.8)
+    cloud(1520, 620, 2.0, 0.7)
+
+    // 오른쪽: 하늘로 솟는 탑
+    const u = 2.0
+    const ttop = tower(1400, 880, [
+      { w: 420, h: 66, dx: 0, color: BLOCKS[0] },
+      { w: 384, h: 66, dx: 20, color: BLOCKS[1] },
+      { w: 348, h: 66, dx: -18, color: BLOCKS[2], perfect: true },
+      { w: 314, h: 66, dx: 16, color: BLOCKS[3] },
+      { w: 280, h: 66, dx: -14, color: BLOCKS[4], perfect: true },
+      { w: 250, h: 66, dx: 12, color: BLOCKS[5], perfect: true },
+    ], u)
+    // 지금 떨어지는 블록 + 맨 위 층의 좌우 안내 점선 — 로고와 같은 장면을 가로로 편 것
+    const gl = 1400 - 250 / 2 + 12
+    const gr = 1400 + 250 / 2 + 12
+    ctx.save()
+    ctx.setLineDash([13, 13])
+    ctx.strokeStyle = 'rgba(36,52,71,0.32)'
+    ctx.lineWidth = 5
+    ctx.beginPath()
+    ctx.moveTo(gl, ttop - 66)
+    ctx.lineTo(gl, ttop - 6)
+    ctx.moveTo(gr, ttop - 66)
+    ctx.lineTo(gr, ttop - 6)
+    ctx.stroke()
+    ctx.restore()
+    block(1400 - 230 / 2 + 66, ttop - 148, 230, 66, BLOCKS[0], u)
+
+    // 왼쪽: 제목과 한 줄 설명
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
+    ctx.font = `900 132px ${FONT}`
+    ctx.lineJoin = 'round'
+    ctx.strokeStyle = COL.ink
+    ctx.lineWidth = 18
+    ctx.strokeText('높이높이', 150, 420)
+    ctx.fillStyle = COL.accent
+    ctx.fillText('높이높이', 150, 420)
+
+    // 부제 알약
+    const label = '오늘의 탑, 몇 층까지?'
+    ctx.font = `800 44px ${FONT}`
+    const tw = ctx.measureText(label).width
+    const pw = tw + 76
+    const ph = 84
+    ctx.fillStyle = 'rgba(36,52,71,0.18)'
+    roundRect(150 + 6, 470 + 7, pw, ph, ph / 2)
+    ctx.fill()
+    roundRect(150, 470, pw, ph, ph / 2)
+    ctx.fillStyle = COL.card
+    ctx.fill()
+    ctx.strokeStyle = COL.ink
+    ctx.lineWidth = 5
+    ctx.stroke()
+    ctx.fillStyle = COL.ink
+    ctx.fillText(label, 150 + 38, 470 + 56)
+
+    // 조작 한 줄
+    ctx.font = `800 38px ${FONT}`
+    ctx.fillStyle = COL.inkSoft
+    ctx.fillText('탭하면 블록이 떨어져요 · 딱 맞추면 안 잘려요', 152, 640)
+  }
+
+  /** 수신구(tools/shot-receiver.mjs)로 PNG를 보낸다 */
+  window.__send = async (name, port = 5300) => {
+    const url = `http://127.0.0.1:${port}/shot?name=${encodeURIComponent(name)}`
+    const r = await fetch(url, { method: 'POST', body: canvas.toDataURL('image/png') })
+    return `${await r.text()} ${canvas.width}x${canvas.height}`
+  }
+</script>
