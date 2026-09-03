@@ -33,9 +33,9 @@
       { "imageUrl": "https://static.toss.im/appsintoss/72091/dd02c22e-883e-488b-aed4-fbf81a366867.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
       { "imageUrl": "https://static.toss.im/appsintoss/72091/a8ca6846-0295-46c5-b591-7bbcfebd5b6f.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
       { "imageUrl": "https://static.toss.im/appsintoss/72091/93349526-d8f2-4b08-8155-279eb85d6a77.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#BFE8F5", "backgroundTheme": "LIGHT" },
-      { "imageUrl": "https://static.toss.im/appsintoss/72091/d194f787-273a-4234-b4a1-3d673e106a10.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#E7A97A", "backgroundTheme": "LIGHT" },
-      { "imageUrl": "https://static.toss.im/appsintoss/72091/5648a3f3-9666-4654-8572-68ea7ee5f1fa.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" },
-      { "imageUrl": "https://static.toss.im/appsintoss/72091/87f5d023-539f-4b86-9253-f6b6671c311a.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" }
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/cfe7394a-7c5b-4003-abf2-12f16cf4df0a.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#E7A97A", "backgroundTheme": "LIGHT" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/598920b5-3483-4e0f-97c9-c0a5d75b4d6f.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" },
+      { "imageUrl": "https://static.toss.im/appsintoss/72091/3cd28cc5-5151-4b7e-8a99-ce70bea9b4b4.png", "imageType": "PREVIEW", "orientation": "VERTICAL", "backgroundColor": "#141B3C", "backgroundTheme": "DARK" }
     ]
   }
 }
