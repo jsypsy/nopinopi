@@ -36,7 +36,9 @@ function runBot(seed: number, sigmaBase: number, sigmaPerSpeed: number, rngSeed:
   return { floors: floors(g), sec: g.timeSec }
 }
 
-const SIM = process.env.SIM === '1'
+// tsconfig에 node 타입이 없어 process를 직접 참조하지 않는다 (날아날아 sim-threat 방식)
+const ENV = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}
+const SIM = ENV.SIM === '1'
 describe.skipIf(!SIM)('봇 세션 분포', () => {
   it('플레이어 유형별 층수·세션 길이 (시드 12개, 오늘 시드)', () => {
     const seed = seedFromKey('2026-09-04')
