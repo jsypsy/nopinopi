@@ -91,7 +91,14 @@ function newGame(): void {
 function startRun(): void {
   bumpStreak()
   tap(game) // ready → playing
-  analytics.gameStart(performance.now(), streak.count)
+  const { w, h } = viewportSize()
+  const insets = cancelHostTopInset(platform.safeArea(), screen.height, h)
+  analytics.gameStart(performance.now(), streak.count, {
+    w,
+    h,
+    dpr: Math.round((Math.min(window.devicePixelRatio || 1, 2)) * 100) / 100,
+    top: Math.round(insets.top),
+  })
 }
 
 function restart(): void {
