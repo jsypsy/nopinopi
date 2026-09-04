@@ -76,7 +76,7 @@ export class Renderer {
   private pieces: FallingPiece[] = []
   private popups: Popup[] = []
   private death: DeathFx | null = null
-  private deathButtons: { continue: Rect | null; retry: Rect | null } = { continue: null, retry: null }
+  private deathButtons: { continue: Rect | null; retry: Rect | null; rank: Rect | null } = { continue: null, retry: null, rank: null }
   /** 낙하 연출: 놓인 순간의 층과 시각 */
   private dropAt = -1e9
   private shakeAt = -1e9
@@ -89,10 +89,11 @@ export class Renderer {
     this.death = null
   }
 
-  hitDeathButton(x: number, y: number): 'continue' | 'retry' | null {
+  hitDeathButton(x: number, y: number): 'continue' | 'retry' | 'rank' | null {
     const inside = (r: Rect | null) => !!r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h
     if (inside(this.deathButtons.continue)) return 'continue'
     if (inside(this.deathButtons.retry)) return 'retry'
+    if (inside(this.deathButtons.rank)) return 'rank'
     return null
   }
 
@@ -135,7 +136,7 @@ export class Renderer {
     if (g.phase === 'dead' && !this.death) this.death = { t0: now }
     if (g.phase !== 'dead') {
       this.death = null
-      this.deathButtons = { continue: null, retry: null }
+      this.deathButtons = { continue: null, retry: null, rank: null }
     }
     const deadT = this.death ? now - this.death.t0 : 0
     // 월드 y(위로 +) → 화면 y. 바닥의 바닥이 화면 아래에서 cam.y 만큼 위
@@ -458,7 +459,7 @@ export class Renderer {
     }
     ctx.restore()
     const hp = clamp01((deadT - 1500) / 300)
-    this.deathButtons = { continue: null, retry: null }
+    this.deathButtons = { continue: null, retry: null, rank: null }
     if (hp > 0) {
       ctx.save()
       ctx.globalAlpha = hp
@@ -492,9 +493,11 @@ export class Renderer {
         const y2 = y1 + 62 * u
         this.pill('다시 하기', cx, y2, `800 ${Math.round(15 * u)}px ${FONT}`, COL.card, COL.inkSoft, 30 * u, 0, u, true, 44 * u)
         this.deathButtons.retry = { x: cx - 110 * u, y: y2 - 22 * u, w: 220 * u, h: 44 * u }
+        this.rankButton(cx, y2 + 50 * u, u)
       } else {
         this.pill('다시 하기', cx, y1, `900 ${Math.round(17 * u)}px ${FONT}`, COL.accent, '#ffffff', 34 * u, 4 * u, u, false, 50 * u)
         this.deathButtons.retry = { x: cx - 110 * u, y: y1 - 25 * u, w: 220 * u, h: 50 * u }
+        this.rankButton(cx, y1 + 54 * u, u)
       }
       ctx.restore()
     }
@@ -528,6 +531,16 @@ export class Renderer {
     ctx.strokeStyle = COL.ink
     ctx.lineWidth = Math.max(1.5, shadow * 0.66)
     ctx.stroke()
+  }
+
+  /**
+   * 결과 카드의 [순위] — 토스 게임센터 순위표를 연다.
+   * 점수 제출은 판이 끝날 때 main이 하고, 이 버튼은 보기만 한다.
+   * 콘솔 앱 정보 승인 전에는 플랫폼이 LEADERBOARD_NOT_FOUND를 주는 것이 정상이다
+   */
+  private rankButton(cx: number, cy: number, u: number): void {
+    this.pill('순위 보기', cx, cy, `800 ${Math.round(14 * u)}px ${FONT}`, COL.card, COL.inkSoft, 26 * u, 0, u, true, 38 * u)
+    this.deathButtons.rank = { x: cx - 90 * u, y: cy - 19 * u, w: 180 * u, h: 38 * u }
   }
 
   private pill(text: string, cx: number, cy: number, font: string, fill: string, color: string, padX: number, shadow: number, u: number, thin: boolean, height?: number): void {

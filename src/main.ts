@@ -136,6 +136,7 @@ bindPointer(
       if (performance.now() - deadAt < RESTART_LOCK * 1000) return
       const hit = renderer.hitDeathButton(x, y)
       if (hit === 'continue') void tryContinue()
+      else if (hit === 'rank') void platform.openLeaderboard()
       else if (hit === 'retry' && !adBusy) restart()
       return
     }
