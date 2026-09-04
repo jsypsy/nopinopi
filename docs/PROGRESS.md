@@ -54,3 +54,15 @@
 - **GRAC 심의용 웹 게시**(2026-09-04): `gh-pages`에 dist 그대로 + `.nojekyll`, 리포 public 전환(사용자 실행),
   Pages 활성화 → https://jsypsy.github.io/nopinopi/ HTTP 200. 내려받아 제출 zip과 SHA-256 일치 확인
   (`index.html` 1,332B · `index-CTVTeQqH.js` 85,468B). **심의 끝날 때까지 갱신 금지**
+
+## 2026-09-04 (밤) — 출시 · 리워드 광고 지면 등록
+
+- **출시 완료**: 앱 정보 승인 + 번들 검수 승인 뒤 라이브 전환. `serviceStatus: OPEN`, 라이브 번들 `20260904-4`(B4).
+  등급분류번호 SC-OM-260904-005 · 증명서 콘솔 등록 완료
+- **리워드 광고 지면 등록**(콘솔 MCP `iaa_placement_group_create`): `높이높이 이어하기 리워드` ·
+  REWARDED · 카테고리 클래식(3856) · 보상 단위 「이어하기」 1 · 상태 ENABLED ·
+  **groupId `ait.v2.live.a59b66845b304e30`** → `src/platform/ait.ts`의 `AD_GROUP_ID`에 넣었다. BUILD 5
+  - 지면이 비어 있으면 `showRewardedAd`가 보상만 주는 폴백으로 돌게 짜여 있었다 — 이제 실제 광고가 붙는다
+  - ⚠️ **실 ID로 광고를 반복 시청하지 말 것**(어뷰징). 동작 확인은 한 번만
+  - 지면은 23일 연속 노출이 없으면 '삭제 예정', 30일이면 삭제된다
+- **아직 배포 안 했다** — B5는 빌드·테스트만 통과. 배포는 사전 확인 뒤에
