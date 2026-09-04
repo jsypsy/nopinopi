@@ -1,0 +1,52 @@
+<!doctype html>
+<!--
+  결과 카드 버튼 배치 미리보기 — 게임을 돌리지 않고 Renderer만 불러 한 장 그린다.
+
+    npx vite --port 5178 → http://127.0.0.1:5178/tools/card-preview.html?left=2
+    ?left=n  남은 이어하기 횟수 (0이면 「다시 하기」가 주 행동인 배치)
+
+  헤드리스 크롬 `--screenshot`으로 그대로 찍을 수 있다(개발 훅이 필요 없다) —
+  `window.__nopi` 훅이 헤드리스에서 안 붙는 문제를 우회하려고 만든 검수용 페이지다.
+-->
+<meta charset="utf-8" />
+<title>결과 카드 미리보기</title>
+<style>
+  html, body { margin: 0; background: #20242c; }
+  canvas { display: block; }
+</style>
+<canvas id="game" width="786" height="1498" style="width:393px;height:749px"></canvas>
+<script type="module">
+  import { Renderer } from '/src/render/renderer.ts'
+  import { createGame, tap } from '/src/core/game.ts'
+  import { TUNING } from '/src/core/tuning.ts'
+
+  const Q = new URLSearchParams(location.search)
+  const left = Number(Q.get('left') ?? 2)
+
+  const canvas = document.getElementById('game')
+  const ctx = canvas.getContext('2d')
+  ctx.setTransform(2, 0, 0, 2, 0, 0)
+
+  // 죽은 판 하나를 손으로 만든다 — 층을 쌓고 마지막에 빗나가게 놓는다
+  const g = createGame(20260905)
+  tap(g)
+  for (let i = 0; i < 52; i++) {
+    const top = g.layers[g.layers.length - 1]
+    g.mover.x = top.x + (i % 3 === 2 ? 9 : 0)
+    tap(g)
+  }
+  const top = g.layers[g.layers.length - 1]
+  g.mover.x = top.x + top.w + 30
+  tap(g)
+  g.perfects = 30
+
+  const cam = { y: Math.max(0, (g.layers.length + 1) * TUNING.blockH - 749 * 0.42) }
+  const renderer = new Renderer(ctx)
+  const hud = { best: 52, dailyBest: 52, dateLabel: '9월 5일', streak: 1 }
+  const ui = { continuesLeft: left, maxContinues: TUNING.maxContinues, adBusy: false }
+
+  // 연출 타임라인을 다 지난 시점으로 그린다 (버튼이 모두 나온 상태)
+  const t0 = performance.now()
+  renderer.draw(g, cam, 393, 749, 0, hud, ui, t0)
+  renderer.draw(g, cam, 393, 749, 0, hud, ui, t0 + 5000)
+</script>
