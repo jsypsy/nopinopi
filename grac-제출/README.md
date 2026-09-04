@@ -59,12 +59,20 @@ grac-제출/
 
 배포본에 개발 훅(`__nopi`)이 0건임을 확인했다(D-023) — 설명서 부록의 "Cheat 코드 없음"과 맞는다.
 
-**심의용 접속 주소 — https://jsypsy.github.io/nopinopi/ (아직 게시 전)**
+**심의용 접속 주소 — https://jsypsy.github.io/nopinopi/ (브랜치는 올렸고, 켜는 것만 남았다)**
 
-- 리포가 private이라 **GitHub Pages가 공개로 서빙되지 않는다.** 게시하려면 `jsypsy/nopinopi`를 public으로
-  바꾸거나, `dist/`만 담은 별도 public 리포를 만들어야 한다. **사용자 결정 대기** — 결정 전에는 위 주소가 404다.
-- 게시 방법: `dist/`를 임시 폴더에 복사 → `.nojekyll` 추가 → orphan `gh-pages`로 `push -f` →
-  내려받아 **zip과 SHA-256 대조**(위 표) → 세 문서의 주소가 살아 있는지 확인.
+- **`gh-pages` 브랜치 게시 완료**(2026-09-04) — `dist/` 그대로 + `.nojekyll`. 제출 zip과 바이트 단위로 같은 B4다.
+- 남은 것 둘은 **사용자가 직접 실행**해야 한다(자동 실행이 막혀 있다). 터미널에서:
+
+  ```
+  gh repo edit jsypsy/nopinopi --visibility public --accept-visibility-change-consequences
+  gh api -X POST repos/jsypsy/nopinopi/pages -f 'source[branch]=gh-pages' -f 'source[path]=/'
+  ```
+
+  리포를 public으로 바꾸는 이유는 **private 리포의 Pages는 공개 서빙이 안 되기 때문**이다(유료 플랜 전용).
+  소스를 공개하고 싶지 않으면 `dist/`만 담은 별도 public 리포를 만들면 되지만, 그때는 주소가 바뀌므로
+  01·02·03 문서의 주소 기재를 함께 고쳐야 한다.
+- 켠 뒤 **내려받아 zip과 SHA-256 대조**(위 표)하고, 세 문서의 주소가 살아 있는지 확인한다.
 - ⚠️ **심의가 끝날 때까지 내리거나 갱신하지 않는다.** 게임 화면 우하단 `B4` 표식으로 제출본과 같은 빌드임을 확인할 수 있다.
 
 ## 스크린샷 8장
