@@ -51,3 +51,6 @@
 - **부제 함정**: 콘솔 부제 칸은 쉼표를 거부한다(`특수문자는 :, ·, ? 만 사용할 수 있어요`).
   화면 문구 「오늘의 탑, 몇 층까지?」에서 쉼표만 뺀 「오늘의 탑 몇 층까지?」로 넣었다
 - 문안·페이로드는 `docs/STORE_COPY.md` · `docs/store-payload.json`. 남은 것은 3단계(게임 등급분류) — GRAC 대기
+- **GRAC 심의용 웹 게시**(2026-09-04): `gh-pages`에 dist 그대로 + `.nojekyll`, 리포 public 전환(사용자 실행),
+  Pages 활성화 → https://jsypsy.github.io/nopinopi/ HTTP 200. 내려받아 제출 zip과 SHA-256 일치 확인
+  (`index.html` 1,332B · `index-CTVTeQqH.js` 85,468B). **심의 끝날 때까지 갱신 금지**

@@ -20,7 +20,8 @@ GRAC 제출물 일습을 만들었다(`grac-제출/`). 접수 전 남은 것은 
            **앱정보 1·2단계 임시저장 완료** — 부제·상세설명·카테고리(게임>클래식)·키워드 10개·로고/다크로고/썸네일·
            스크린샷 6장·리더보드 단위(층/floors). 3단계(게임 등급분류)만 GRAC 대기.
            문안 `docs/STORE_COPY.md` · 페이로드 `docs/store-payload.json` · 이미지 `assets/store/` 9장(static.toss.im 업로드 완료)
-저장소     github.com/jsypsy/nopinopi (**private** — GRAC 심의용 gh-pages를 쓰려면 public 전환이 필요하다, 사용자 결정 대기)
+저장소     github.com/jsypsy/nopinopi (**public 전환됨** 2026-09-04 — GRAC 심의용 Pages 때문. `gh-pages` = dist 그대로,
+           https://jsypsy.github.io/nopinopi/ 게시 완료·zip과 SHA-256 대조 끝. **심의 끝날 때까지 갱신 금지**)
 디자인     밝은 카툰(도형 + 굵은 외곽선 + 오프셋 그림자), 층 색 6색 순환, 층수에 따라 낮→노을→밤→우주. 에셋 0. 소리 3종(D-003)
 GRAC       `grac-제출/` — 개요 974자 · 설명서 12쪽(스샷 8장) · 용량 3쪽 · 웹URL 3쪽 · 빌드 zip(86,800바이트).
            해시·절차·함정은 `grac-제출/README.md`
@@ -30,9 +31,7 @@ GRAC       `grac-제출/` — 개요 974자 · 설명서 12쪽(스샷 8장) · �
 ## 다음 세션이 할 일
 
 0. **접수 전 사용자 몫 넷** (`grac-제출/README.md`의 「접수 절차」와 같다):
-   - **심의용 웹 주소 게시 결정** — 리포가 private이라 지금은 https://jsypsy.github.io/nopinopi/ 가 404다.
-     `jsypsy/nopinopi`를 public으로 바꾸거나 `dist/`만 담은 별도 public 리포를 만든다. 게시 뒤 내려받아 zip과 SHA-256 대조.
-     **게시하지 않기로 하면** 01·02·03 문서의 웹 주소 기재를 들어내야 한다(심의자가 접속을 요구할 수 있어 권장하지 않는다)
+   - ~~심의용 웹 주소 게시~~ **완료**(2026-09-04) — https://jsypsy.github.io/nopinopi/ · 제출 zip과 SHA-256 일치 확인
    - **제명 동명 재확인** (GRAC 등급분류 검색, 「높이높이」·「높이높이 스카이드」)
    - **플레이 영상 촬영** → `grac-제출/04_게임플레이영상_높이높이.mp4` (git 제외). **B4**로 찍는다
    - **접수 + 수수료 결제**
